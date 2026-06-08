@@ -38,7 +38,7 @@ tests/
 
 ## 快速开始
 
-当前仓库没有看到打包配置文件，因此可以直接从源码目录运行：
+可以直接从源码目录运行：
 
 ```powershell
 python -m Persona_Interactive_Code_Agent --help
@@ -146,7 +146,6 @@ python -m Persona_Interactive_Code_Agent --approval never
 python -m pytest -q
 ```
 
-测试和脚本已统一使用当前源码包名 `Persona_Interactive_Code_Agent`。
 
 ## Benchmark 和实验
 
@@ -167,43 +166,3 @@ python scripts\collect_resume_metrics.py `
   --output-json artifacts\resume-metrics.json `
   --output-markdown artifacts\resume-metrics.md
 ```
-
-运行更大的实验集合：
-
-```powershell
-python scripts\run_large_scale_experiments.py `
-  --benchmark-artifact artifacts\harness-regression-v2.json `
-  --runs-root artifacts\provider-workspaces `
-  --provider-output-json artifacts\provider.json `
-  --resume-output-json artifacts\resume.json `
-  --resume-output-markdown artifacts\resume.md `
-  --memory-output-json artifacts\memory.json `
-  --context-output-json artifacts\context.json `
-  --security-output-json artifacts\security.json `
-  --final-report-markdown artifacts\final-report.md
-```
-
-## 运行工件
-
-Agent 在目标 workspace 下写入 `.pico/`：
-
-```text
-.pico/
-  sessions/           # 可恢复 session JSON
-  runs/<run_id>/      # 单次请求工件
-    task_state.json
-    trace.jsonl
-    report.json
-  memory/
-    MEMORY.md
-    topics/*.md
-```
-
-这些文件用于恢复、调试和指标聚合。通常不建议把真实项目里的 `.pico/` 运行工件提交到业务仓库。
-
-## 开发备注
-
-- 新增工具时，优先在 `tools.py` 增加 schema、校验、示例和 runner，再通过 `runtime.Pico.build_tools()` 暴露。
-- 改动 prompt 组装逻辑时，同步检查 `context_manager.py` 的 section metadata，确保 trace/report 仍能解释压缩过程。
-- 改动恢复逻辑时，关注 checkpoint schema、file freshness、runtime identity mismatch 和 stale summary invalidation。
-- 改动模型后端时，保持 `complete(prompt, max_new_tokens, **kwargs)` 这个统一接口。
